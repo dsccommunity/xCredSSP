@@ -1,6 +1,6 @@
-{{AppVeyor build status badge for master branch}}
+[![Build status](https://ci.appveyor.com/api/projects/status/29y5yx2vxwjq60ic/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xcredssp/branch/master)
 
-#{{ModuleName}}
+# xCredSSP
 
 {{Description}}
 
