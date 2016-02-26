@@ -122,10 +122,14 @@ try
                     $global:DSCMachineStatus = $null
                 }
 
+                Mock Get-WSManCredSSP -MockWith {@([string]::Empty,[string]::Empty)}
                 mock Enable-WSManCredSSP -MockWith {} -Verifiable
                 mock Disable-WSManCredSSP -MockWith {} 
                 it 'should not return anything' {
-                    Set-TargetResource -Ensure 'Present' -Role Client -DelegateComputer 'foo'| should be $null 
+                    Set-TargetResource -Ensure 'Present' -Role Client -DelegateComputer 'foo' | should be $null 
+                }
+                it 'should have called get' {
+                    Assert-MockCalled -CommandName Get-WSManCredSSP -Times 1
                 }
                 it 'should have called enable'{
                     Assert-MockCalled -CommandName Enable-WSManCredSSP -Times 1 -ParameterFilter {$Role -eq 'Client' -and $Force -eq $true -and $DelegateComputer -eq 'foo'} 
@@ -145,12 +149,16 @@ try
                     $global:DSCMachineStatus = $null
                 }
 
+                Mock Get-WSManCredSSP -MockWith {@([string]::Empty,[string]::Empty)}
                 mock Enable-WSManCredSSP -MockWith {} -Verifiable
                 mock Disable-WSManCredSSP -MockWith {} 
                 it 'should throw' {
                     {Set-TargetResource -Ensure 'Present' -Role Client } | should throw 'DelegateComputers is required!' 
                 }
-                it 'should have called enable'{
+                it 'should have not called get' {
+                    Assert-MockCalled -CommandName Get-WSManCredSSP -Times 0
+                }
+                it 'should have called enable' {
                     Assert-MockCalled -CommandName Enable-WSManCredSSP -Times 0 
                 }
                 it 'should have not called disable' {
