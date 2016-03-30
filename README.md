@@ -45,6 +45,8 @@ The **xCredSSP** module contains the **xCredSSP** resource, which enables or dis
 
 ### Unreleased
 
+### 1.1.0.0
+
 ### 1.0.1.0
 
 *   Updated with minor bug fixes.
