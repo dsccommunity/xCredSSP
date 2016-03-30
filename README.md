@@ -47,6 +47,8 @@ The **xCredSSP** module contains the **xCredSSP** resource, which enables or dis
 
 ### 1.1.0.0
 
+*   Made sure DSC reboots if credSS is enabled
+
 ### 1.0.1.0
 
 *   Updated with minor bug fixes.
