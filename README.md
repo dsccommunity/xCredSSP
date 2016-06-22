@@ -10,6 +10,9 @@ This module contains the **xCredSSP** resource, which enables or disables Creden
 **All of the resources in the DSC Resource Kit are provided AS IS, and are not supported through any Microsoft standard support program or service.
 The "x" in xCredSSP stands for experimental**, which means that these resources will be **fix forward** and monitored by the module owner(s).
 
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
 ## Installation
 
 To install **xCredSSP** module
