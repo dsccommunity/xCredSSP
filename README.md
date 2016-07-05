@@ -47,6 +47,7 @@ The **xCredSSP** module contains the **xCredSSP** resource, which enables or dis
 ## Versions
 
 ### Unreleased
+* Converted appveyor.yml to install Pester from PSGallery instead of from Chocolatey.
 
 ### 1.1.0.0
 
