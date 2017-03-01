@@ -10,21 +10,51 @@ function Get-TargetResource
         $Role
     )
 
+    if ($Role -eq "Server" -and ($DelegateComputers)) 
+    {
+        Write-Verbose -Message ("Cannot use the Role=Server parameter together with " + `
+                                "the DelegateComputers parameter")
+        return $null
+    }
+
+    #Check if GPO policy has been set
     switch($Role)
     {
         "Server"
         {
-            $RegKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WSMAN\Service"
+            $RegKey = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service"
         }
         "Client"
         {
-            $RegKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WSMAN\Client"
+            $RegKey = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client"
         }
     }
+    $RegValueName = "AllowCredSSP"
 
-    if(Get-ItemProperty -Path $RegKey -Name "auth_credssp" -ErrorAction SilentlyContinue)
+    if (Test-RegistryValue -Path $RegKey -Name $RegValueName)
     {
-        $Setting = (Get-ItemProperty -Path $RegKey -Name "auth_credssp").auth_credssp
+        Write-Verbose -Message "CredSSP is configured via Group Policies"
+    }
+    else
+    {
+        # Check regular values
+        switch($Role)
+        {
+            "Server"
+            {
+                $RegKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WSMAN\Service"
+            }
+            "Client"
+            {
+                $RegKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WSMAN\Client"
+            }
+        }
+        $RegValueName = "auth_credssp"
+    }
+
+    if(Test-RegistryValue -Path $RegKey -Name $RegValueName)
+    {
+        $Setting = (Get-ItemProperty -Path $RegKey -Name $RegValueName).$RegValueName
     }
     else
     {
@@ -59,11 +89,16 @@ function Get-TargetResource
             {
                 1
                 {   
+                    $key = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentials"
+
                     $DelegateComputers = @()
-                    foreach($DelegateComputer in (Get-WSManCredSSP)[0].Split(","))
-                    {
-                        $DelegateComputers += $DelegateComputer.Split("/")[1]
-                    }
+
+                    Get-Item -Path $key |
+                        Select-Object -ExpandProperty Property | 
+                        ForEach-Object {
+                            $DelegateComputer = ((Get-ItemProperty -Path $key -Name $_).$_).Split("/")[1]
+                            $DelegateComputers += $DelegateComputer
+                        }
                     $DelegateComputers = $DelegateComputers | Sort-Object -Unique
 
                     $returnValue = @{
@@ -83,7 +118,7 @@ function Get-TargetResource
         }
     }
 
-    $returnValue
+    return $returnValue
 }
 
 
@@ -105,6 +140,31 @@ function Set-TargetResource
         $DelegateComputers
     )
 
+    if ($Role -eq "Server" -and ($DelegateComputers)) 
+    {
+        throw ("Cannot use the Role=Server parameter together with " + `
+               "the DelegateComputers parameter")
+    }
+    
+    #Check if policy has been set
+    switch($Role)
+    {
+        "Server"
+        {
+            $RegKey = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service"
+        }
+        "Client"
+        {
+            $RegKey = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client"
+        }
+    }
+    $RegValueName = "AllowCredSSP"
+
+    if (Test-RegistryValue -Path $RegKey -Name $RegValueName)
+    {
+        Throw "Cannot configure CredSSP. CredSSP is configured via Group Policies"
+    }
+
     switch($Role)
     {
         "Server"
@@ -113,12 +173,12 @@ function Set-TargetResource
             {
                 "Present"
                 {
-                    Enable-WSManCredSSP -Role Server -Force
+                    Enable-WSManCredSSP -Role Server -Force | Out-Null
                     $global:DSCMachineStatus = 1
                 }
                 "Absent"
                 {
-                    Disable-WSManCredSSP -Role Server
+                    Disable-WSManCredSSP -Role Server | Out-Null
                 }
             }
         }
@@ -130,12 +190,23 @@ function Set-TargetResource
                 {
                     if($DelegateComputers)
                     {
-                        $CurrentDelegateComputer = (Get-WSManCredSSP)[0]
+                        $key = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentials"
+
+                        $CurrentDelegateComputers = @()
+
+                        Get-Item -Path $key |
+                            Select-Object -ExpandProperty Property | 
+                            ForEach-Object {
+                                $CurrentDelegateComputer = ((Get-ItemProperty -Path $key -Name $_).$_).Split("/")[1]
+                                $CurrentDelegateComputers += $CurrentDelegateComputer
+                            }
+                        $CurrentDelegateComputers = $CurrentDelegateComputers | Sort-Object -Unique
+
                         foreach($DelegateComputer in $DelegateComputers)
                         {
-                            if(!$CurrentDelegateComputer.Contains("wsman/$DelegateComputer"))
+                            if(!$CurrentDelegateComputers.Contains($DelegateComputer))
                             {
-                                Enable-WSManCredSSP -Role Client -DelegateComputer $DelegateComputer -Force
+                                Enable-WSManCredSSP -Role Client -DelegateComputer $DelegateComputer -Force | Out-Null
                                 $global:DSCMachineStatus = 1
                             }
                         }
@@ -147,7 +218,7 @@ function Set-TargetResource
                 }
                 "Absent"
                 {
-                    Disable-WSManCredSSP -Role Client
+                    Disable-WSManCredSSP -Role Client | Out-Null
                 }
             }
         }
@@ -209,9 +280,21 @@ function Test-TargetResource
         }
     }
 
-    $result
+    return $result
 }
 
 
 Export-ModuleMember -Function *-TargetResource
 
+
+function Test-RegistryValue
+{
+    param (
+        [Parameter(Mandatory = $true)]
+        [String]$Path
+        ,
+        [Parameter(Mandatory = $true)]
+        [String]$Name
+    )
+    return -not($null -eq (Get-ItemProperty -Path $Path -ErrorAction SilentlyContinue).$Name)
+}
