@@ -137,7 +137,10 @@ function Set-TargetResource
         $Role,
 
         [System.String[]]
-        $DelegateComputers
+        $DelegateComputers,
+
+        [System.Boolean]
+        $SuppressReboot = $false        
     )
 
     if ($Role -eq "Server" -and ($DelegateComputers)) 
@@ -174,7 +177,10 @@ function Set-TargetResource
                 "Present"
                 {
                     Enable-WSManCredSSP -Role Server -Force | Out-Null
-                    $global:DSCMachineStatus = 1
+                    if ($SuppressReboot -eq $false)
+                    {
+                        $global:DSCMachineStatus = 1
+                    }
                 }
                 "Absent"
                 {
@@ -207,7 +213,10 @@ function Set-TargetResource
                             if(!$CurrentDelegateComputers.Contains($DelegateComputer))
                             {
                                 Enable-WSManCredSSP -Role Client -DelegateComputer $DelegateComputer -Force | Out-Null
-                                $global:DSCMachineStatus = 1
+                                if ($SuppressReboot -eq $false)
+                                {
+                                    $global:DSCMachineStatus = 1
+                                }
                             }
                         }
                     }
