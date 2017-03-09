@@ -251,7 +251,10 @@ function Test-TargetResource
         $Role,
 
         [System.String[]]
-        $DelegateComputers
+        $DelegateComputers,
+
+        [System.Boolean]
+        $SuppressReboot = $false    
     )
 
     $CredSSP = Get-TargetResource -Role $Role
