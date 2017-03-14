@@ -10,13 +10,6 @@ function Get-TargetResource
         $Role
     )
 
-    if ($Role -eq "Server" -and ($DelegateComputers)) 
-    {
-        Write-Verbose -Message ("Cannot use the Role=Server parameter together with " + `
-                                "the DelegateComputers parameter")
-        return $null
-    }
-
     #Check if GPO policy has been set
     switch($Role)
     {
@@ -257,6 +250,12 @@ function Test-TargetResource
         $SuppressReboot = $false    
     )
 
+    if ($Role -eq "Server" -and $PSBoundParameters.ContainsKey("DelegateComputers")) 
+    {
+        Write-Verbose -Message ("Cannot use the Role=Server parameter together with " + `
+                                "the DelegateComputers parameter")
+    }
+
     $CredSSP = Get-TargetResource -Role $Role
 
     switch($Role)
@@ -308,5 +307,11 @@ function Test-RegistryValue
         [Parameter(Mandatory = $true)]
         [String]$Name
     )
+    
+    if ($null -eq $Path)
+    {
+        return $false
+    }
+
     return -not($null -eq (Get-ItemProperty -Path $Path -ErrorAction SilentlyContinue).$Name)
 }

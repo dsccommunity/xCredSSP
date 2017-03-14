@@ -76,18 +76,18 @@ try
                 mock Disable-WSManCredSSP -MockWith {} 
 
                 it 'should throw' {
-                    {Set-TargetResource -Ensure 'Present' -Role Server -DelegateComputer 'foo'} | should throw 
+                    { Set-TargetResource -Ensure 'Present' -Role Server -DelegateComputer 'foo' } | should throw 
                 }
                 it 'should have not called enable' {
-                    Assert-MockCalled -CommandName Enable-WSManCredSSP -Times 0 
+                    Assert-MockCalled -CommandName Enable-WSManCredSSP -Times 0 -Scope 'Context'
                 }
                 it 'should have not called disable' {
-                    Assert-MockCalled -CommandName Disable-WSManCredSSP -Times 0 
+                    Assert-MockCalled -CommandName Disable-WSManCredSSP -Times 0 -Scope 'Context'
                 }
                 it 'Should not have triggered a reboot' {
                     $global:DSCMachineStatus | should be $null
                 }
-            } 
+            }
             
             Context "Enable Server Role when it has been configured using GPO" {
                 BeforeAll {
@@ -104,13 +104,13 @@ try
                 } -ParameterFilter { $Path -eq "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service" }
 
                 it 'should throw' {
-                    {Set-TargetResource -Ensure 'Present' -Role Server}| should throw 
+                    { Set-TargetResource -Ensure 'Present' -Role Server }| should throw 
                 }
                 it 'should have not called enable' {
-                    Assert-MockCalled -CommandName Enable-WSManCredSSP -Times 0 
+                    Assert-MockCalled -CommandName Enable-WSManCredSSP -Times 0 -Scope 'Context'
                 }
                 it 'should have not called disable' {
-                    Assert-MockCalled -CommandName Disable-WSManCredSSP -Times 0 
+                    Assert-MockCalled -CommandName Disable-WSManCredSSP -Times 0 -Scope 'Context'
                 }
                 it 'Should not have triggered a reboot' {
                     $global:DSCMachineStatus | should be $null
@@ -135,10 +135,10 @@ try
                     {Set-TargetResource -Ensure 'Present' -Role Client -DelegateComputers 'foo'}| should throw 
                 }
                 it 'should have not called enable' {
-                    Assert-MockCalled -CommandName Enable-WSManCredSSP -Times 0 
+                    Assert-MockCalled -CommandName Enable-WSManCredSSP -Times 0 -Scope 'Context'
                 }
                 it 'should have not called disable' {
-                    Assert-MockCalled -CommandName Disable-WSManCredSSP -Times 0 
+                    Assert-MockCalled -CommandName Disable-WSManCredSSP -Times 0 -Scope 'Context'
                 }
                 it 'Should not have triggered a reboot' {
                     $global:DSCMachineStatus | should be $null
@@ -242,16 +242,16 @@ try
                 }
                 
                 it 'should throw' {
-                    {Set-TargetResource -Ensure 'Present' -Role Client } | should throw 'DelegateComputers is required!' 
+                    { Set-TargetResource -Ensure 'Present' -Role Client } | should throw 'DelegateComputers is required!' 
                 }
                 it 'should have not called get' {
-                    Assert-MockCalled -CommandName Get-WSManCredSSP -Times 0
+                    Assert-MockCalled -CommandName Get-WSManCredSSP -Times 0 -Scope 'Context'
                 }
                 it 'should have called enable' {
-                    Assert-MockCalled -CommandName Enable-WSManCredSSP -Times 0 
+                    Assert-MockCalled -CommandName Enable-WSManCredSSP -Times 0 -Scope 'Context'
                 }
                 it 'should have not called disable' {
-                    Assert-MockCalled -CommandName Disable-WSManCredSSP -Times 0 
+                    Assert-MockCalled -CommandName Disable-WSManCredSSP -Times 0 -Scope 'Context'
                 }
                 it 'Should have triggered a reboot'{
                     $global:DSCMachineStatus | should be $null
