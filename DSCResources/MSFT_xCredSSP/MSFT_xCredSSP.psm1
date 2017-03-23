@@ -313,5 +313,6 @@ function Test-RegistryValue
         return $false
     }
 
-    return -not($null -eq (Get-ItemProperty -Path $Path -ErrorAction SilentlyContinue).$Name)
+    $itemProperties = Get-ItemProperty -Path $Path -ErrorAction SilentlyContinue
+    return ($null -ne $itemProperties -and $null -ne $itemProperties.$Name)
 }
