@@ -43,11 +43,16 @@ The **xCredSSP** module contains the **xCredSSP** resource, which enables or dis
 *   **Ensure:** Specifies whether the domain trust is present or absent 
 *   **Role**: REQUIRED parameter representing the CredSSP role, and is either "Server" or "Client" 
 *   **DelegateComputers**: Array of servers to be delegated to, REQUIRED when Role is set to "Client".
+*   **SuppressReboot**: Specifies whether a necessary reboot has to be supressed or not.
 
 ## Versions
 
 ### Unreleased
 * Converted appveyor.yml to install Pester from PSGallery instead of from Chocolatey.
+* Implemented a GPO check to prevent an endless reboot loop when CredSSP is configured via a GPO
+* Fixed issue with Test always returning false with other regional settings then english
+* Added check to test if Role=Server and DelegateComputers parameter is specified
+* Added parameter to supress a reboot, default value is false (reboot server when required)
 
 ### 1.1.0.0
 
