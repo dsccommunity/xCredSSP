@@ -48,6 +48,8 @@ The **xCredSSP** module contains the **xCredSSP** resource, which enables or dis
 ## Versions
 
 ### Unreleased
+
+### 1.2.0.0
 * Converted appveyor.yml to install Pester from PSGallery instead of from Chocolatey.
 * Implemented a GPO check to prevent an endless reboot loop when CredSSP is configured via a GPO
 * Fixed issue with Test always returning false with other regional settings then english
