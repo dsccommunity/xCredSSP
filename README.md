@@ -10,6 +10,9 @@ This module contains the **xCredSSP** resource, which enables or disables Creden
 **All of the resources in the DSC Resource Kit are provided AS IS, and are not supported through any Microsoft standard support program or service.
 The "x" in xCredSSP stands for experimental**, which means that these resources will be **fix forward** and monitored by the module owner(s).
 
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
 ## Installation
 
 To install **xCredSSP** module
@@ -40,10 +43,18 @@ The **xCredSSP** module contains the **xCredSSP** resource, which enables or dis
 *   **Ensure:** Specifies whether the domain trust is present or absent 
 *   **Role**: REQUIRED parameter representing the CredSSP role, and is either "Server" or "Client" 
 *   **DelegateComputers**: Array of servers to be delegated to, REQUIRED when Role is set to "Client".
+*   **SuppressReboot**: Specifies whether a necessary reboot has to be supressed or not.
 
 ## Versions
 
 ### Unreleased
+
+### 1.2.0.0
+* Converted appveyor.yml to install Pester from PSGallery instead of from Chocolatey.
+* Implemented a GPO check to prevent an endless reboot loop when CredSSP is configured via a GPO
+* Fixed issue with Test always returning false with other regional settings then english
+* Added check to test if Role=Server and DelegateComputers parameter is specified
+* Added parameter to supress a reboot, default value is false (reboot server when required)
 
 ### 1.1.0.0
 
