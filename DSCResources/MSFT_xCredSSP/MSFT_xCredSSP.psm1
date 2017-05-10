@@ -191,10 +191,10 @@ function Set-TargetResource
                     {
                         $key = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentials"
 			
-			            if (!(test-path $key))
+                        if (!(test-path $key))
                         {
-				            New-Item $key -Force | out-null
-			            }
+                            New-Item $key -Force | out-null
+                        }
 
                         $CurrentDelegateComputers = @()
 
@@ -208,17 +208,17 @@ function Set-TargetResource
 
                         foreach($DelegateComputer in $DelegateComputers)
                         {
-			                if($CurrentDelegateComputers -eq $NULL)
-			                {
+                            if($CurrentDelegateComputers -eq $NULL)
+                            {
                                 Enable-WSManCredSSP -Role Client -DelegateComputer $DelegateComputer -Force | Out-Null
                                 if ($SuppressReboot -eq $false)
                                 {
-                                    $global:DSCMachineStatus = 1
+                                   $global:DSCMachineStatus = 1
                                 }
-			                }
-			                else
-			                {
-			    	            if(!$CurrentDelegateComputers.Contains($DelegateComputer))
+                            }
+                            else
+                            {
+                                if(!$CurrentDelegateComputers.Contains($DelegateComputer))
                                 {
                                     Enable-WSManCredSSP -Role Client -DelegateComputer $DelegateComputer -Force | Out-Null
                                     if ($SuppressReboot -eq $false)
@@ -226,7 +226,7 @@ function Set-TargetResource
                                         $global:DSCMachineStatus = 1
                                     }
                                 }
-			                }
+                            }
                         }
                     }
                     else
