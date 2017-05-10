@@ -190,7 +190,7 @@ function Set-TargetResource
                     if($DelegateComputers)
                     {
                         $key = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentials"
-			
+
                         if (!(test-path $key))
                         {
                             New-Item $key -Force | out-null
