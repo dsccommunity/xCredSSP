@@ -48,6 +48,7 @@ The **xCredSSP** module contains the **xCredSSP** resource, which enables or dis
 ## Versions
 
 ### Unreleased
+* Added a fix to enable credSSP with a fresh server installation
 
 ### 1.2.0.0
 * Converted appveyor.yml to install Pester from PSGallery instead of from Chocolatey.
