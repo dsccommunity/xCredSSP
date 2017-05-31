@@ -48,6 +48,8 @@ The **xCredSSP** module contains the **xCredSSP** resource, which enables or dis
 ## Versions
 
 ### Unreleased
+
+### 1.3.0.0
 * Added a fix to enable credSSP with a fresh server installation
 
 ### 1.2.0.0
