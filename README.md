@@ -49,6 +49,9 @@ The **xCredSSP** module contains the **xCredSSP** resource, which enables or dis
 
 ### Unreleased
 
+### 1.3.0.0
+* Added a fix to enable credSSP with a fresh server installation
+
 ### 1.2.0.0
 * Converted appveyor.yml to install Pester from PSGallery instead of from Chocolatey.
 * Implemented a GPO check to prevent an endless reboot loop when CredSSP is configured via a GPO
