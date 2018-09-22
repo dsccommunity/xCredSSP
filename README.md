@@ -40,14 +40,17 @@ The **xCredSSP** module contains the **xCredSSP** resource, which enables or dis
 
 **xCredSSP** resource has following properties:
 
-*   **Ensure:** Specifies whether the domain trust is present or absent 
-*   **Role**: REQUIRED parameter representing the CredSSP role, and is either "Server" or "Client" 
+*   **Ensure:** Specifies whether the domain trust is present or absent
+*   **Role**: REQUIRED parameter representing the CredSSP role, and is either "Server" or "Client"
 *   **DelegateComputers**: Array of servers to be delegated to, REQUIRED when Role is set to "Client".
 *   **SuppressReboot**: Specifies whether a necessary reboot has to be supressed or not.
 
 ## Versions
 
 ### Unreleased
+
+* Update appveyor.yml to use the default template.
+* Added default template files .codecov.yml, .gitattributes, and .gitignore and .vscode folder.
 
 ### 1.3.0.0
 * Added a fix to enable credSSP with a fresh server installation
@@ -70,8 +73,8 @@ The **xCredSSP** module contains the **xCredSSP** resource, which enables or dis
 
 ### 1.0.0.0
 
-*   Initial release with the following resources 
-    *   <span style="font-family:Calibri; font-size:medium">xADDomain</span> 
+*   Initial release with the following resources
+    *   <span style="font-family:Calibri; font-size:medium">xADDomain</span>
 
 ## Examples
 
@@ -95,7 +98,7 @@ Configuration EnableCredSSP
             DelegateComputers = "Server1","Server2"
         }
     }
-} 
+}
 ```
 
 ## Contributing
