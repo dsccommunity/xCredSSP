@@ -209,7 +209,7 @@ function Set-TargetResource
 
                         foreach ($DelegateComputer in $DelegateComputers)
                         {
-                            if (($null -eq $CurrentDelegateComputers) -or (!$CurrentDelegateComputers -contains $DelegateComputer))
+                            if (($null -eq $CurrentDelegateComputers) -or ($CurrentDelegateComputers -notcontains $DelegateComputer))
                             {
                                 Enable-WSManCredSSP -Role Client -DelegateComputer $DelegateComputer -Force | Out-Null
                                 if ($SuppressReboot -eq $false)
