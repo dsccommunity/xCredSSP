@@ -56,6 +56,69 @@ try
 
         #region Function Test-TargetResource
         Describe "$($Global:DSCResourceName)\Test-TargetResource" {
+            Context "Enable Server Role with invalid delegate Computer parameter" {
+                BeforeAll {
+                    $global:DSCMachineStatus = $null                
+                }
+                AfterAll {
+                    $global:DSCMachineStatus = $null
+                }
+                
+                mock Enable-WSManCredSSP -MockWith {} -Verifiable
+                mock Disable-WSManCredSSP -MockWith {} 
+
+                it 'should throw' {
+                    Test-TargetResource -Ensure 'Present' -Role Server -DelegateComputer 'foo' | Should Be $false
+                }
+            }
+
+            Context "Server Role not configured" {
+                BeforeAll {
+                    $global:DSCMachineStatus = $null                
+                }
+                AfterAll {
+                    $global:DSCMachineStatus = $null
+                }
+
+                mock Get-ItemProperty -MockWith {
+                    return @{ auth_credssp = 0 }
+                }
+                it 'should not return anything' {
+                    Test-TargetResource -Ensure 'Present' -Role Server | should be $false
+                }
+            } 
+
+            Context "Client Role not configured" {
+                BeforeAll {
+                    $global:DSCMachineStatus = $null                
+                }
+                AfterAll {
+                    $global:DSCMachineStatus = $null
+                }
+
+                Mock Get-WSManCredSSP -MockWith {@([string]::Empty,[string]::Empty)}
+                mock Get-ItemProperty -MockWith {
+                    return @{
+                        1 = "wsman/testserver.domain.com"
+                        2 = "wsman/testserver2.domain.com"
+                    }
+                }
+                mock Get-Item -MockWith {
+                    $client1 = New-Object -typename PSObject| 
+                                Add-Member NoteProperty "Name" 1 -PassThru |
+                                Add-Member NoteProperty "Property" 1 -PassThru
+
+                    $client2 = New-Object -typename PSObject| 
+                                Add-Member NoteProperty "Name" 2 -PassThru |
+                                Add-Member NoteProperty "Property" 2 -PassThru
+                    
+                    return @($client1, $client2)
+                }
+
+                it 'should not return anything' {
+                    Test-TargetResource -Ensure 'Present' -Role Client -DelegateComputer 'foo' | should be $false
+                }
+            } 
             # TODO: Complete Tests...
         }
         #endregion

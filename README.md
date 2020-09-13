@@ -51,6 +51,7 @@ The **xCredSSP** module contains the **xCredSSP** resource, which enables or dis
 
 * Update appveyor.yml to use the default template.
 * Added default template files .codecov.yml, .gitattributes, and .gitignore and .vscode folder.
+* Fixed issue where the Set method did not correct DelegateComputers, when two machines were accidentally added as one string instead of an array.
 
 ### 1.3.0.0
 * Added a fix to enable credSSP with a fresh server installation
