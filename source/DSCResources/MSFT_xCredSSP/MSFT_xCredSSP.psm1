@@ -4,7 +4,7 @@ function Get-TargetResource
     [OutputType([System.Collections.Hashtable])]
     param
     (
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateSet("Server","Client")]
         [System.String]
         $Role
@@ -118,21 +118,25 @@ function Get-TargetResource
 
 function Set-TargetResource
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSDSCUseVerboseMessageInDSCResource', '', Justification = 'Suppressed until localized messages are added to the function')]
     [CmdletBinding()]
     param
     (
+        [Parameter()]
         [ValidateSet("Present","Absent")]
         [System.String]
         $Ensure = "Present",
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateSet("Server","Client")]
         [System.String]
         $Role,
 
+        [Parameter()]
         [System.String[]]
         $DelegateComputers,
 
+        [Parameter()]
         [System.Boolean]
         $SuppressReboot = $false
     )
@@ -159,10 +163,10 @@ function Set-TargetResource
 
     if (Test-RegistryValue -Path $RegKey -Name $RegValueName)
     {
-        Throw "Cannot configure CredSSP. CredSSP is configured via Group Policies"
+        throw "Cannot configure CredSSP. CredSSP is configured via Group Policies"
     }
 
-    switch($Role)
+    switch ($Role)
     {
         "Server"
         {
@@ -221,7 +225,7 @@ function Set-TargetResource
                     }
                     else
                     {
-                        Throw "DelegateComputers is required!"
+                        throw "DelegateComputers is required!"
                     }
                 }
                 "Absent"
@@ -240,18 +244,21 @@ function Test-TargetResource
     [OutputType([System.Boolean])]
     param
     (
+        [Parameter()]
         [ValidateSet("Present","Absent")]
         [System.String]
         $Ensure = "Present",
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateSet("Server","Client")]
         [System.String]
         $Role,
 
+        [Parameter()]
         [System.String[]]
         $DelegateComputers,
 
+        [Parameter()]
         [System.Boolean]
         $SuppressReboot = $false
     )
