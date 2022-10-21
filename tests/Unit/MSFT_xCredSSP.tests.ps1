@@ -40,7 +40,7 @@ Invoke-TestSetup
 
 try
 {
-    InModuleScope $script:dscModuleName  {
+    InModuleScope $script:dscResourceName  {
         Describe "$($script:dscModuleName)\Get-TargetResource" {
             # TODO: Complete Tests...
         }
@@ -223,6 +223,10 @@ try
 
             Context "Enable Client Role" {
                 BeforeAll {
+                    Mock -CommandName New-Item -ParameterFilter {
+                        $Path -eq 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentials'
+                    }
+
                     $global:DSCMachineStatus = $null
                 }
                 AfterAll {
