@@ -3,11 +3,10 @@
 This module contains DSC resources for the management and
 configuration of Credential Security Support Provider (CredSSP).
 
-<!-- Update with the correct definition number - replace 9999 with the definition number for the pipeline /-->
-[![Build Status](https://dev.azure.com/dsccommunity/xCredSSP/_apis/build/status/dsccommunity.xCredSSP?branchName=main)](https://dev.azure.com/dsccommunity/xCredSSP/_build/latest?definitionId=9999&branchName=main)
-![Azure DevOps coverage (branch)](https://img.shields.io/azure-devops/coverage/dsccommunity/xCredSSP/9999/main)
+[![Build Status](https://dev.azure.com/dsccommunity/xCredSSP/_apis/build/status/dsccommunity.xCredSSP?branchName=main)](https://dev.azure.com/dsccommunity/xCredSSP/_build/latest?definitionId=52&branchName=main)
+![Azure DevOps coverage (branch)](https://img.shields.io/azure-devops/coverage/dsccommunity/xCredSSP/52/main)
 [![codecov](https://codecov.io/gh/dsccommunity/xCredSSP/branch/main/graph/badge.svg)](https://codecov.io/gh/dsccommunity/xCredSSP)
-[![Azure DevOps tests](https://img.shields.io/azure-devops/tests/dsccommunity/xCredSSP/9999/main)](https://dsccommunity.visualstudio.com/xCredSSP/_test/analytics?definitionId=9999&contextType=build)
+[![Azure DevOps tests](https://img.shields.io/azure-devops/tests/dsccommunity/xCredSSP/52/main)](https://dsccommunity.visualstudio.com/xCredSSP/_test/analytics?definitionId=52&contextType=build)
 [![PowerShell Gallery (with prereleases)](https://img.shields.io/powershellgallery/vpre/xCredSSP?label=xCredSSP%20Preview)](https://www.powershellgallery.com/packages/xCredSSP/)
 [![PowerShell Gallery](https://img.shields.io/powershellgallery/v/xCredSSP?label=xCredSSP)](https://www.powershellgallery.com/packages/xCredSSP/)
 
