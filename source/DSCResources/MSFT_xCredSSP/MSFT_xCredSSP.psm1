@@ -4,14 +4,14 @@ function Get-TargetResource
     [OutputType([System.Collections.Hashtable])]
     param
     (
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateSet("Server","Client")]
         [System.String]
         $Role
     )
 
     #Check if GPO policy has been set
-    switch($Role)
+    switch ($Role)
     {
         "Server"
         {
@@ -31,7 +31,7 @@ function Get-TargetResource
     else
     {
         # Check regular values
-        switch($Role)
+        switch ($Role)
         {
             "Server"
             {
@@ -45,7 +45,7 @@ function Get-TargetResource
         $RegValueName = "auth_credssp"
     }
 
-    if(Test-RegistryValue -Path $RegKey -Name $RegValueName)
+    if (Test-RegistryValue -Path $RegKey -Name $RegValueName)
     {
         $Setting = (Get-ItemProperty -Path $RegKey -Name $RegValueName).$RegValueName
     }
@@ -54,11 +54,11 @@ function Get-TargetResource
         $Setting = 0
     }
 
-    switch($Role)
+    switch ($Role)
     {
         "Server"
         {
-            switch($Setting)
+            switch ($Setting)
             {
                 1
                 {
@@ -78,17 +78,17 @@ function Get-TargetResource
         }
         "Client"
         {
-            switch($Setting)
+            switch ($Setting)
             {
                 1
-                {   
+                {
                     $key = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentials"
 
                     $DelegateComputers = @()
 
 
                     Get-Item -Path $key -ErrorAction SilentlyContinue |
-                        Select-Object -ExpandProperty Property | 
+                        Select-Object -ExpandProperty Property |
                         ForEach-Object {
                             $DelegateComputer = ((Get-ItemProperty -Path $key -Name $_).$_).Split("/")[1]
                             $DelegateComputers += $DelegateComputer
@@ -118,33 +118,37 @@ function Get-TargetResource
 
 function Set-TargetResource
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSDSCUseVerboseMessageInDSCResource', '', Justification = 'Suppressed until localized messages are added to the function')]
     [CmdletBinding()]
     param
     (
+        [Parameter()]
         [ValidateSet("Present","Absent")]
         [System.String]
         $Ensure = "Present",
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateSet("Server","Client")]
         [System.String]
         $Role,
 
+        [Parameter()]
         [System.String[]]
         $DelegateComputers,
 
+        [Parameter()]
         [System.Boolean]
-        $SuppressReboot = $false        
+        $SuppressReboot = $false
     )
 
-    if ($Role -eq "Server" -and ($DelegateComputers)) 
+    if ($Role -eq "Server" -and ($DelegateComputers))
     {
         throw ("Cannot use the Role=Server parameter together with " + `
                "the DelegateComputers parameter")
     }
-    
+
     #Check if policy has been set
-    switch($Role)
+    switch ($Role)
     {
         "Server"
         {
@@ -159,14 +163,14 @@ function Set-TargetResource
 
     if (Test-RegistryValue -Path $RegKey -Name $RegValueName)
     {
-        Throw "Cannot configure CredSSP. CredSSP is configured via Group Policies"
+        throw "Cannot configure CredSSP. CredSSP is configured via Group Policies"
     }
 
-    switch($Role)
+    switch ($Role)
     {
         "Server"
         {
-            switch($Ensure)
+            switch ($Ensure)
             {
                 "Present"
                 {
@@ -184,11 +188,11 @@ function Set-TargetResource
         }
         "Client"
         {
-            switch($Ensure)
+            switch ($Ensure)
             {
                 "Present"
                 {
-                    if($DelegateComputers)
+                    if ($DelegateComputers)
                     {
                         $key = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentials"
 
@@ -200,16 +204,16 @@ function Set-TargetResource
                         $CurrentDelegateComputers = @()
 
                         Get-Item -Path $key |
-                            Select-Object -ExpandProperty Property | 
+                            Select-Object -ExpandProperty Property |
                             ForEach-Object {
                                 $CurrentDelegateComputer = ((Get-ItemProperty -Path $key -Name $_).$_).Split("/")[1]
                                 $CurrentDelegateComputers += $CurrentDelegateComputer
                             }
                         $CurrentDelegateComputers = $CurrentDelegateComputers | Sort-Object -Unique
 
-                        foreach($DelegateComputer in $DelegateComputers)
+                        foreach ($DelegateComputer in $DelegateComputers)
                         {
-                            if(($CurrentDelegateComputers -eq $NULL) -or (!$CurrentDelegateComputers.Contains($DelegateComputer)))
+                            if (($null -eq $CurrentDelegateComputers) -or ($CurrentDelegateComputers -notcontains $DelegateComputer))
                             {
                                 Enable-WSManCredSSP -Role Client -DelegateComputer $DelegateComputer -Force | Out-Null
                                 if ($SuppressReboot -eq $false)
@@ -221,7 +225,7 @@ function Set-TargetResource
                     }
                     else
                     {
-                        Throw "DelegateComputers is required!"
+                        throw "DelegateComputers is required!"
                     }
                 }
                 "Absent"
@@ -240,23 +244,26 @@ function Test-TargetResource
     [OutputType([System.Boolean])]
     param
     (
+        [Parameter()]
         [ValidateSet("Present","Absent")]
         [System.String]
         $Ensure = "Present",
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateSet("Server","Client")]
         [System.String]
         $Role,
 
+        [Parameter()]
         [System.String[]]
         $DelegateComputers,
 
+        [Parameter()]
         [System.Boolean]
-        $SuppressReboot = $false    
+        $SuppressReboot = $false
     )
 
-    if ($Role -eq "Server" -and $PSBoundParameters.ContainsKey("DelegateComputers")) 
+    if ($Role -eq "Server" -and $PSBoundParameters.ContainsKey("DelegateComputers"))
     {
         Write-Verbose -Message ("Cannot use the Role=Server parameter together with " + `
                                 "the DelegateComputers parameter")
@@ -264,7 +271,7 @@ function Test-TargetResource
 
     $CredSSP = Get-TargetResource -Role $Role
 
-    switch($Role)
+    switch ($Role)
     {
         "Server"
         {
@@ -272,16 +279,16 @@ function Test-TargetResource
         }
         "Client"
         {
-            switch($Ensure)
+            switch ($Ensure)
             {
                 "Present"
                 {
                     $CorrectDelegateComputers = $true
-                    if($DelegateComputers)
+                    if ($DelegateComputers)
                     {
-                        foreach($DelegateComputer in $DelegateComputers)
+                        foreach ($DelegateComputer in $DelegateComputers)
                         {
-                            if(!($CredSSP.DelegateComputers | Where-Object {$_ -eq $DelegateComputer}))
+                            if (!($CredSSP.DelegateComputers | Where-Object {$_ -eq $DelegateComputer}))
                             {
                                 $CorrectDelegateComputers = $false
                             }
@@ -313,7 +320,7 @@ function Test-RegistryValue
         [Parameter(Mandatory = $true)]
         [String]$Name
     )
-    
+
     if ($null -eq $Path)
     {
         return $false
