@@ -5,6 +5,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- xCredSSP
+  - Renamed default branch to `main`.
+
+## [1.4.0] - 2022-10-23
+
 - Updated pipeline for continuos delivery.
 - Fixed issue where the Set method did not correct DelegateComputers, when
   two machines were accidentally added as one string instead of an array.
