@@ -1,6 +1,6 @@
 codecov:
   require_ci_to_pass: no
-  branch: master
+  branch: main
 
 comment:
   layout: "reach, diff, flags, files"
